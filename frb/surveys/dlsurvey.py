@@ -2,15 +2,13 @@
 DataLab survey class. Gets data from any survey
 available through the NOAO datalab-client.
 """
-import pdb
-
 import numpy as np
 import warnings
-from astropy.table import Table
 from astropy import units
 import warnings
 
-import sys, os
+from frb.surveys import catalog_utils
+
 try:
     from dl import queryClient as qc, authClient as ac
     from dl.helpers.utils import convert
@@ -22,7 +20,7 @@ from frb.surveys import surveycoord
 class DL_Survey(surveycoord.SurveyCoord):
     """
     A survey class for all databases hosted
-    by NOAO's DataLab. Inherits from SurveyCoord
+    by NOIR's DataLab. Inherits from SurveyCoord
     """
     def __init__(self, coord, radius, **kwargs):
         surveycoord.SurveyCoord.__init__(self, coord, radius, **kwargs)
@@ -45,7 +43,7 @@ class DL_Survey(surveycoord.SurveyCoord):
     def _select_best_img(self,imgTable,verbose,timeout=120):
         pass
 
-    def get_catalog(self, query=None, query_fields=None, print_query=False,timeout=120):
+    def get_catalog(self, query=None, query_fields=None, print_query=False,timeout=120, photomdict=None):
         """
         Get catalog sources around the given coordinates
         within self.radius.
@@ -68,6 +66,9 @@ class DL_Survey(surveycoord.SurveyCoord):
         # Do it while silencing print statements
         result = qc.query(self.token, sql=query,timeout=timeout)
         self.catalog = convert(result,outfmt="table")
+
+        if photomdict:
+            self.catalog = catalog_utils.clean_cat(self.catalog, photomdict)
         
         self.catalog.meta['radius'] = self.radius
         self.catalog.meta['survey'] = self.survey

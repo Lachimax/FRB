@@ -17,11 +17,11 @@ pm_required = pytest.mark.skipif(not hasattr(mcmc, 'pm'),
                                  reason='test requires pymc3')
 
 # FRBs -- Init for the golden 5
-frb180924 = frb.FRB.by_name('FRB20180924')
-frb181112 = frb.FRB.by_name('FRB20181112')
-frb190102 = frb.FRB.by_name('FRB20190102')
-frb190608 = frb.FRB.by_name('FRB20190608')
-frb190711 = frb.FRB.by_name('FRB20190711')
+frb180924 = frb.FRB.by_name('FRB20180924B')
+frb181112 = frb.FRB.by_name('FRB20181112A')
+frb190102 = frb.FRB.by_name('FRB20190102C')
+frb190608 = frb.FRB.by_name('FRB20190608B')
+frb190711 = frb.FRB.by_name('FRB20190711A')
 mcmc.frbs = [frb180924, frb181112, frb190102, frb190608, frb190711]
 mcmc.frb_DMs = np.array([frb.DM.value-frb.DMISM.value for frb in mcmc.frbs])
 mcmc.frb_zs = np.array([frb.z for frb in mcmc.frbs])
@@ -56,13 +56,13 @@ def test_pdf():
 def test_allprob():
     F=0.32
     # All
-    like = mcmc.all_prob(mcmc.Planck15_Obh70, F, None,
+    like = mcmc.all_prob(mcmc.cosmo_Obh70, F, None,
                             mcmc.frb_zs)
     # One by one
     ln_like = 0.
     probs = []
     for frb in mcmc.frbs:
-        prob = mcmc.one_prob(mcmc.Planck15_Obh70, F, 
+        prob = mcmc.one_prob(mcmc.cosmo_Obh70, F, 
                             frb.DM.value - frb.DMISM.value, frb.z,
                 mu=150., lognorm_s=1., lognorm_floor=0.,
                 beta=3., orig=False)
